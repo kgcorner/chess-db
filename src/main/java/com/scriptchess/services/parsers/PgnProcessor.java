@@ -115,6 +115,9 @@ public interface PgnProcessor {
         game.setTournament(tournament);
         game.setWhitePlayer(whitePlayer);
         game.setBlackPlayer(blackPlayer);
+        if(game.getDate() != null && game.getTournament() != null) {
+            tournament.setYear(game.getDate().getYear());
+        }
         if(!Strings.isNullOrEmpty(game.getSite()) && whitePlayer.getPlayerIds().size() > 0) {
             String whitePlayerId = whitePlayer.getPlayerIds().get(0);
             String blackPlayerId = blackPlayer.getPlayerIds().get(0);
