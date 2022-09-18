@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-public class ChessDbApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ChessDbApplication.class, args);
+public class ChessDbDriver {
+    public static void init(String[] args) {
+        SpringApplication.run(ChessDbDriver.class, args);
     }
 }
