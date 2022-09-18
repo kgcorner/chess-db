@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * Description : <Write class Description>
  * Author: kumar
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Move {
+public class Move  implements Serializable {
     private int moveNumber;
     private String move;
     private int timeTakenInSec;

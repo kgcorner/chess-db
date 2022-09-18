@@ -3,6 +3,7 @@ package com.scriptchess.models;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +14,11 @@ import java.util.List;
  */
 
 @Data
-public class Tournament {
+public class Tournament  implements Serializable {
     private String name;
     private Date startDate;
     private List<Player> players;
     private String site;
     private int rounds;
+    private int year;
 }

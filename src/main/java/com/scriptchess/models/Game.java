@@ -5,11 +5,9 @@ import com.scriptchess.util.Strings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Description : <Write class Description>
@@ -19,7 +17,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-public class Game {
+public class Game implements Serializable {
     private static final String PGN_FORMAT = "[Event \"{event}\"]\n" +
         "[Site \"{site}\"]\n" +
         "[Date \"{date}\"]\n" +
