@@ -14,6 +14,6 @@ import static org.junit.Assert.*;
 public class PgnServiceTest {
     @Test
     public void testPgnService() {
-        assertNotNull(new PgnService());
+        assertNotNull(new ChessService());
     }
 }
