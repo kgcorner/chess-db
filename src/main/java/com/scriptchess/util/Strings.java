@@ -1,6 +1,8 @@
 package com.scriptchess.util;
 
 
+import org.springframework.util.DigestUtils;
+
 /**
  * Description : <Write class Description>
  * Author: kumar
@@ -10,5 +12,8 @@ package com.scriptchess.util;
 public class Strings {
     public static boolean isNullOrEmpty(String val) {
         return val == null || val.trim().length() == 0;
+    }
+    public static String getMd5(String data) {
+        return DigestUtils.md5DigestAsHex(data.getBytes());
     }
 }
