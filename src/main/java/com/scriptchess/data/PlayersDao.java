@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class PlayersDao {
 
-    @Value("${players.index.path}")
+    @Value("${players.path}")
     private String playersFilePath;
 
 
