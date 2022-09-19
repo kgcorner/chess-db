@@ -2,8 +2,15 @@ language: java
 jdk:
   - openjdk11
 
+addons:
+  sonarcloud:
+    organization: "kgcorner-github"
+    token:
+      secure: "w0VCyAmMu8nI7embUF/CtuZqtFMxb5FBoqAXD7XwBBe5BXRvGCB2Ox/FSOAlCJC4frNmPJ4JNz5WoWMqEn3zu32HMgm1mbceMVLnUdTdbV78dmmyyiFL+WKTU4fXMfTGG7hmDnQb2GuIUd0ORFVMyEXiREsalpzCJKRkBjkfKMd2zmDg+uNJ/3m3CNnX3uUGi52k0hRw8pMKn/bpVMeXpL8zaJ/qzn5uc1fqwj1hESv0ALKExxHVG8oKwJ23oWrOhXvQCxxBhyvmapiR5BYCWp5N0ESDxn3b8WYWeAw9qyUnhLYYOcsJLSGh3RkPs1ynREKdJCe/2LEaFiQaV2VegriEDmuNyai3xqRbssv6//DKJHreiMiU0K2QAXqy1qz4EK2Rrt0rDUDHNyq8mVrJJS/SyMMixu3E7liQvmfh9nuTXXjRrtDvPQ6NdtwbXZSzhAWJKqA5aJYfujHqj0XCeUHGFQUBnlBczC1RZIXNkMOYzR7sCFe/+qHdCg0x7X1UL6+cHOfesnExWNNbAjXR5qt+LA8U7hBMfBacE13BqkcWHKJLH0ez4MJA3QHL8YSWPA8pWEa9g5dK1WsSJANdTXw8p8RlHFj+8oBGdzFLvRn5+zKVMMA2cdAD8HN6bXi+zDCPWrm7fziqOJ0YhHHttGFUff4QGf8N4y3FR9BNL8I=" # encrypted value of your token
+
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - cd backend
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 after_success:
   - bash <(curl -s https://codecov.io/bash)
