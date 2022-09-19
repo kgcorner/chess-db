@@ -4,15 +4,11 @@ import com.scriptchess.models.Game;
 import com.scriptchess.models.Player;
 import com.scriptchess.models.Tournament;
 import com.scriptchess.util.Strings;
-import com.sun.corba.se.spi.ior.IdentifiableFactory;
 import org.apache.log4j.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.zip.DataFormatException;
 
 /**
  * Description : <Write class Description>
