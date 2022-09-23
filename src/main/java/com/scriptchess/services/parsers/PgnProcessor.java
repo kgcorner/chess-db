@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Map;
 
 /**
@@ -112,7 +113,9 @@ public interface PgnProcessor {
         game.setWhitePlayer(whitePlayer);
         game.setBlackPlayer(blackPlayer);
         if(game.getDate() != null && game.getTournament() != null) {
-            tournament.setYear(game.getDate().getYear());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(game.getDate());
+            tournament.setYear(calendar.get(Calendar.YEAR));
         }
         if(!Strings.isNullOrEmpty(game.getSite()) && whitePlayer.getPlayerIds().size() > 0) {
             String whitePlayerId = whitePlayer.getPlayerIds().get(0);

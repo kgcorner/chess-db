@@ -50,7 +50,7 @@ public class ChessArenaPgnProcessor implements PgnProcessor {
             }
         }
         game = fillGameMetadata(details, game);
-        allMovesStr =allMovesStr.replaceAll(Pattern.quote("."),". ").replaceAll(Pattern.quote(". . . "),"...").replaceAll("  "," ");
+        allMovesStr = allMovesStr.replaceAll(Pattern.quote("."),". ").replaceAll(Pattern.quote(". . . "),"...").replaceAll("  "," ");
         String[] allMoves = allMovesStr.split(moveRegex);
         int moveNum = 1;
         List<Move> moveList = new ArrayList<Move>();
