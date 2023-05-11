@@ -40,6 +40,22 @@ public class ByteWisePGNProcessorTest {
         "    1. e4 e5 2. Nf3 d6 3. Bc4 Bg4 4. d3 Nf6 5. h3 Bh5 6. Nc3 c6 7. g4 Bg6 8. Ng5 h6\n" +
         "    9. Nf3 Nbd7 10. Be3 b5 1-0";
 
+    private static final String PGN_WITH_UNKNOWN_VALUES = "[Event \"Live Chess - chess\"]\n" +
+        "    [Site \"Chess.com\"]\n" +
+        "    [Date \"2023.05.11\"]\n" +
+        "    [Round \"?\"]\n" +
+        "    [White \"muzzleplayer\"]\n" +
+        "    [Black \"Jordy-tk\"]\n" +
+        "    [Result \"1-0\"]\n" +
+        "    [Round \"?\"]\n" +
+        "    [TimeControl \"600\"]\n" +
+        "    [WhiteElo \"?\"]\n" +
+        "    [BlackElo \"?\"]\n" +
+        "    [Termination \"muzzleplayer won by resignation\"]\n" +
+        "    \n" +
+        "    1. e4 e5 2. Nf3 d6 3. Bc4 Bg4 4. d3 Nf6 5. h3 Bh5 6. Nc3 c6 7. g4 Bg6 8. Ng5 h6\n" +
+        "    9. Nf3 Nbd7 10. Be3 b5 1-0";
+
     private static final String MULTI_GAME_PGN = "[Site \"https://www.chess.com\"]\n" +
         "[Event \"Play-In\"]\n" +
         "[White \"Aronian, Levon\"]\n" +
@@ -73,6 +89,7 @@ public class ByteWisePGNProcessorTest {
         "[Result \"1/2-1/2\"]\n" +
         "[Round \"09\"]\n" +
         "[TimeControl \"600+2\"]\n" +
+        "[Tournament \"Daily\"]\n" +
         "[Date \"2023.05.01\"]\n" +
         "[WhiteClock \"0:09:34\"]\n" +
         "[BlackClock \"0:09:28\"]\n" +
@@ -175,5 +192,11 @@ public class ByteWisePGNProcessorTest {
     @Test
     public void supports() {
         assertTrue(pgnProcessor.supports(PGN));
+    }
+
+    @Test
+    public void testPgnWithUnknownValues() {
+        List<Game> games = pgnProcessor.parseMultiGamePgn(PGN_WITH_UNKNOWN_VALUES.getBytes());
+        assertTrue(games != null);
     }
 }

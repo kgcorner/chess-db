@@ -74,7 +74,7 @@ public class PGNProcessorFactoryTest {
             "{ [%clk 00:03:14] } 47... Qxe4 { [%clk 00:01:16] } 0-1";
 
         PgnProcessor processor = PGNProcessorFactory.getProcessor(pgn);
-        assertTrue(processor instanceof ChessArenaPgnProcessor);
+        assertTrue(processor instanceof ByteWisePGNProcessor);
 
     }
 }

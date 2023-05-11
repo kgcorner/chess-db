@@ -1,1 +1,1 @@
-com.scriptchess.services.parsers.ChessArenaPgnProcessor
+com.scriptchess.services.parsers.ByteWisePGNProcessor
