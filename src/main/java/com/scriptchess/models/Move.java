@@ -20,4 +20,12 @@ public class Move  implements Serializable {
     private int moveNumber;
     private String move;
     private int timeTakenInSec;
+    private String moveTime;
+    private String comment;
+
+    public Move(int num, String move, int timeTaken) {
+        this.moveNumber = num;
+        this.move = move;
+        this.timeTakenInSec = timeTaken;
+    }
 }

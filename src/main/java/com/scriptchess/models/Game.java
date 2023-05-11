@@ -1,6 +1,7 @@
 package com.scriptchess.models;
 
 
+import com.scriptchess.util.PGNDateParser;
 import com.scriptchess.util.Strings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 public class Game implements Serializable {
+    private static final long serialVersionUID = 1;
     private static final String PGN_FORMAT = "[Event \"{event}\"]\n" +
         "[Site \"{site}\"]\n" +
         "[Date \"{date}\"]\n" +
@@ -51,32 +53,39 @@ public class Game implements Serializable {
     private static final String KEY_PLACEHOLDER = "{key}";
     private static final String VALUE_PLACEHOLDER = "{value}";
     private static final String PGN_PLACEHOLDER = "{pgn}";
-
+    private String pgn;
+    private String  md5;
     private List<Move> moves;
     private String event;
     private String site;
     private Date date;
-    private int round;
+    private String round;
     private Player whitePlayer;
     private Player blackPlayer;
     private String result;
     private boolean whiteWinner;
+    private boolean draw;
     private Tournament tournament;
+    private String eco = "?";
     private Map<String, String> otherDetails = new HashMap<>();
-
+    private int index;
+    private String gameId;
+    private List<String> tags;
+    private List<String> fens;
+    private String opening;
     public String exportInPgn() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.mm.dd");
         String pgn = PGN_FORMAT.replace(EVENT_PLACEHOLDER, getStringOrNull(event))
             .replace(SITE_PLACEHOLDER, getStringOrNull(site))
-            .replace(DATE_PLACEHOLDER, getStringOrNull(sdf.format(date)))
+            .replace(DATE_PLACEHOLDER, getStringOrNull(PGNDateParser.formatDate(date)))
             .replace(WHITE_PLAYER_NAME_PLACEHOLDER, getStringOrNull(whitePlayer.getName()))
             .replace(BLACK_PLAYER_NAME_PLACEHOLDER, getStringOrNull(blackPlayer.getName()))
             .replace(RESULT_PLACEHOLDER, getStringOrNull(result))
             .replace(RESULT_PLACEHOLDER, getStringOrNull(result))
             .replace(WHITE_ELO_PLACEHOLDER, getStringOrNull(whitePlayer.getElo()))
             .replace(BLACK_ELO_PLACEHOLDER, getStringOrNull(blackPlayer.getElo()))
-            .replace(WHITE_FIDE_ID_PLACEHOLDER, getStringOrNull(whitePlayer.getFideId()))
-            .replace(BLACK_FIDE_ID_PLACEHOLDER, getStringOrNull(blackPlayer.getFideId()))
+            .replace(WHITE_FIDE_ID_PLACEHOLDER, getStringOrNull(whitePlayer.getPlayerId()))
+            .replace(BLACK_FIDE_ID_PLACEHOLDER, getStringOrNull(blackPlayer.getPlayerId()))
             .replace(TOURNAMENT_PLACEHOLDER, getStringOrNull(tournament != null ?tournament.getName() : null))
             .replace(ROUND_PLACEHOLDER, getStringOrNull(round+""));
         String otherDetailsStr = "";

@@ -171,6 +171,7 @@ public class ChessComPgnProcessorTest {
         moves.add(new Move(29, "Kb3", 0));
         moves.add(new Move(29, "Rxc3#", 0));
         expectedGame.setMoves(moves);
+        expectedGame.setRound("?");
         Game result = parser.parsePgn(pgn);
         assertEquals(expectedGame.getEvent(), result.getEvent());
         assertEquals(expectedGame.getSite(), result.getSite());

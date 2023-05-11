@@ -3,11 +3,15 @@ package com.scriptchess.services.parsers;
 import com.scriptchess.models.Game;
 import com.scriptchess.models.Player;
 import com.scriptchess.models.Tournament;
+import com.scriptchess.util.PGNDateParser;
 import com.scriptchess.util.Strings;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,9 +21,17 @@ import java.util.Map;
  */
 
 public interface PgnProcessor {
-    Logger PGN_PROCESSOR_LOGGER = Logger.getLogger(PgnProcessor.class);
+    Logger PGN_PROCESSOR_LOGGER = LogManager.getLogger(PgnProcessor.class);
     Game parsePgn(String fullPgn);
     boolean supports(String fullpgn);
+
+    default Game parsePgn(byte[] bytes) {
+        throw new UnsupportedOperationException();
+    }
+
+    default List<Game> parseMultiGamePgn(byte[] bytes) {
+        throw new UnsupportedOperationException();
+    }
 
     default boolean matchSite(String fullPgn, String site) {
         String[] lines = fullPgn.split("\n");
@@ -47,7 +59,7 @@ public interface PgnProcessor {
     default Game fillGameMetadata(Map<String, String> gameMetadata, Game game) {
         if(gameMetadata == null || gameMetadata.size() == 0)
             return game;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.mm.dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
         Player whitePlayer = new Player();
         Player blackPlayer = new Player();
         Tournament tournament = new Tournament();
@@ -61,15 +73,11 @@ public interface PgnProcessor {
                     game.setSite(entry.getValue());
                     break;
                 case "date":
-                    try {
-                        game.setDate(sdf.parse(entry.getValue()));
-                    } catch (ParseException x) {
-                        PGN_PROCESSOR_LOGGER.error(x.getMessage());
-                    }
+                    game.setDate(PGNDateParser.parseDate(entry.getValue()));
                     break;
                 case "round":
                     try {
-                        game.setRound(Integer.parseInt(entry.getValue()));
+                        game.setRound(entry.getValue());
                     } catch (NumberFormatException x) {
                         PGN_PROCESSOR_LOGGER.error(x.getMessage());
                     }
@@ -82,9 +90,20 @@ public interface PgnProcessor {
                     break;
                 case "result":
                     game.setResult(entry.getValue());
+                    if(entry.getValue().trim().equals("1-0")) {
+                        game.setWhiteWinner(true);
+                    } else {
+                        if(entry.getValue().trim().equals("1/2-1/2") || entry.getValue().trim().equals("1/2")) {
+                            game.setDraw(true);
+                        }
+                    }
                     break;
                 case "blackelo":
-                    blackPlayer.setElo(Double.parseDouble(entry.getValue()));
+                    try {
+                        blackPlayer.setElo(Double.parseDouble(entry.getValue()));
+                    } catch (NumberFormatException x) {
+                        PGN_PROCESSOR_LOGGER.error(x.getMessage());
+                    }
                     break;
                 case "blackfideid":
                     blackPlayer.setFideId(entry.getValue());
@@ -96,7 +115,11 @@ public interface PgnProcessor {
                     tournament.setName(entry.getValue());
                     break;
                 case "whiteelo":
-                    whitePlayer.setElo(Double.parseDouble(entry.getValue()));
+                    try {
+                        whitePlayer.setElo(Double.parseDouble(entry.getValue()));
+                    } catch (NumberFormatException x) {
+                        PGN_PROCESSOR_LOGGER.error(x.getMessage());
+                    }
                     break;
                 case "whitefideid":
                     whitePlayer.setFideId(entry.getValue());
@@ -104,15 +127,23 @@ public interface PgnProcessor {
                 case "whiteplayerid":
                     whitePlayer.getPlayerIds().add(entry.getValue());
                     break;
+                case "eco":
+                    game.setEco(entry.getValue());
+                    break;
                 default:
                     game.getOtherDetails().put(key, entry.getValue());
             }
+        }
+        if(tournament != null && Strings.isNullOrEmpty(tournament.getName())) {
+            tournament.setName(game.getEvent());
         }
         game.setTournament(tournament);
         game.setWhitePlayer(whitePlayer);
         game.setBlackPlayer(blackPlayer);
         if(game.getDate() != null && game.getTournament() != null) {
-            tournament.setYear(game.getDate().getYear());
+            Calendar c = Calendar.getInstance();
+            c.setTime(game.getDate());
+            tournament.setYear(c.get(Calendar.YEAR));
         }
         if(!Strings.isNullOrEmpty(game.getSite()) && whitePlayer.getPlayerIds().size() > 0) {
             String whitePlayerId = whitePlayer.getPlayerIds().get(0);
