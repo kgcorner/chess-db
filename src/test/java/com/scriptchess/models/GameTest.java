@@ -40,7 +40,7 @@ public class GameTest {
 
     @Before
     public void setUp() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.mm.dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
         game = new Game();
         game.setEvent("Live Chess");
         game.setSite("Chess.com");

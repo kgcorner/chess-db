@@ -103,7 +103,8 @@ public class GenericPgnProcessorTest {
 
         Game game = pgnProcessor.parsePgn(pgn);
         assertNotNull(game);
-        assertNull(game.getDate());
+        assertNotNull(game.getDate());
+        assertEquals(2003, game.getDate().getYear() + 1900);
         //assertNull(game.getTournament());
         assertEquals("Anand,V", game.getWhitePlayer().getName());
         assertEquals(55, game.getMoves().size());

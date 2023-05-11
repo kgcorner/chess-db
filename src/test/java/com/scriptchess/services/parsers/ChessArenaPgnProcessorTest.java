@@ -96,7 +96,7 @@ public class ChessArenaPgnProcessorTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        expectedGame.setRound(1);
+        expectedGame.setRound("1");
         Player white = new Player();
         Player black = new Player();
         white.setName("Kumar Gaurav");
