@@ -40,9 +40,4 @@ public class PGNDateParser {
             return "?";
         return new SimpleDateFormat("yyyy.MM.dd").format(date);
     }
-
-    public static void main(String[] args) throws ParseException {
-        String dateStr = "1882.09.25";
-        System.out.println(new SimpleDateFormat("YYYY.mm.dd").parse(dateStr));
-    }
 }
