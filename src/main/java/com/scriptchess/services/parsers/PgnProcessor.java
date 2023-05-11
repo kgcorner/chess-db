@@ -33,29 +33,6 @@ public interface PgnProcessor {
         throw new UnsupportedOperationException();
     }
 
-    default boolean matchSite(String fullPgn, String site) {
-        String[] lines = fullPgn.split("\n");
-        //Parse Details
-        for(String line : lines) {
-            if(Strings.isNullOrEmpty(line))
-                continue;
-            if(line.startsWith("[") && line.endsWith("]")) {
-                line = line.replace("[","").replace("]","").replaceAll("\"","");
-                String[] parts = line.split(" ");
-                if(parts.length == 2 && parts[0].equalsIgnoreCase("site")) {
-                    if(!site.contains("*"))
-                        return parts[1].equalsIgnoreCase(site);
-                    else {
-                        site = site.replace("*", "");
-                        return parts[1].contains(site);
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-        return false;
-    }
     default Game fillGameMetadata(Map<String, String> gameMetadata, Game game) {
         if(gameMetadata == null || gameMetadata.size() == 0)
             return game;
@@ -76,11 +53,7 @@ public interface PgnProcessor {
                     game.setDate(PGNDateParser.parseDate(entry.getValue()));
                     break;
                 case "round":
-                    try {
-                        game.setRound(entry.getValue());
-                    } catch (NumberFormatException x) {
-                        PGN_PROCESSOR_LOGGER.error(x.getMessage());
-                    }
+                    game.setRound(entry.getValue());
                     break;
                 case "white":
                     whitePlayer.setName(entry.getValue());
@@ -108,9 +81,6 @@ public interface PgnProcessor {
                 case "blackfideid":
                     blackPlayer.setFideId(entry.getValue());
                     break;
-                case "blackplayerid":
-                    blackPlayer.getPlayerIds().add(entry.getValue());
-                    break;
                 case "tournament":
                     tournament.setName(entry.getValue());
                     break;
@@ -123,9 +93,6 @@ public interface PgnProcessor {
                     break;
                 case "whitefideid":
                     whitePlayer.setFideId(entry.getValue());
-                    break;
-                case "whiteplayerid":
-                    whitePlayer.getPlayerIds().add(entry.getValue());
                     break;
                 case "eco":
                     game.setEco(entry.getValue());
@@ -144,14 +111,6 @@ public interface PgnProcessor {
             Calendar c = Calendar.getInstance();
             c.setTime(game.getDate());
             tournament.setYear(c.get(Calendar.YEAR));
-        }
-        if(!Strings.isNullOrEmpty(game.getSite()) && whitePlayer.getPlayerIds().size() > 0) {
-            String whitePlayerId = whitePlayer.getPlayerIds().get(0);
-            String blackPlayerId = blackPlayer.getPlayerIds().get(0);
-            whitePlayerId += game.getSite() + ":" + whitePlayerId;
-            blackPlayerId += game.getSite() + ":" + blackPlayerId;
-            whitePlayer.getPlayerIds().set(0, whitePlayerId);
-            blackPlayer.getPlayerIds().set(0, blackPlayerId);
         }
         return game;
     }

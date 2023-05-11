@@ -1,22 +1,7 @@
 package com.scriptchess.util;
 
 
-import com.scriptchess.exceptions.FileExists;
-import com.scriptchess.models.Game;
-import com.scriptchess.models.Move;
-import com.scriptchess.models.Player;
-import com.scriptchess.models.Tournament;
-import com.scriptchess.services.parsers.ChessArenaPgnProcessor;
-import com.scriptchess.services.parsers.ChessComPgnProcessor;
-
 import java.io.*;
-import java.security.SecureRandom;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Description : Utility CLass for Serializing and De-Serializing
