@@ -266,7 +266,7 @@ public class ChessService {
         try {
             tournaments = tournamentsDao.getTournaments();
         } catch (DAOException e) {
-            new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return tournaments;
     }
@@ -281,7 +281,7 @@ public class ChessService {
         try {
             tournaments = tournamentsDao.getTournamentsInYear(year);
         } catch (DAOException e) {
-            new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
         return tournaments;
     }
