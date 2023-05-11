@@ -270,17 +270,18 @@ public class ByteWisePGNProcessor implements PgnProcessor {
                         if(b != SPACE && commentTokenMap.containsKey(b)) {
                             commentBytes.add(b);
                             String s = commentTokenMap.get(b);
+                            if(s.equals("(")) {
+                                currentTokenType = TOKEN_TYPE.COMMENT;
+                                comment1TokenCount++;
+                                continue;
+                            }
                             if(s.equals("{")) {
                                 currentTokenType = TOKEN_TYPE.COMMENT;
                                 comment2TokenCount++;
                                 continue;
                             }
 
-                            if(s.equals("(")) {
-                                currentTokenType = TOKEN_TYPE.COMMENT;
-                                comment1TokenCount++;
-                                continue;
-                            }
+
                         }
                         continue;
                     }
