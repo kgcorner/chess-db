@@ -146,7 +146,6 @@ public class FileUtil {
             }
             FileUtil.deleteFile(path+".tmp");
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.error(e);
         } finally {
             if(fos != null) {
