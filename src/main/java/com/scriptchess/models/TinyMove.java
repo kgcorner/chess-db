@@ -144,7 +144,7 @@ public class TinyMove {
     private static boolean[] getBooleanArray(byte num, byte maxLen) {
         boolean [] flags = new boolean[maxLen];
         for (int i = maxLen -1; i >= 0; i--) {
-            flags[maxLen - 1 - i] = (num & (1 << i)) != 0;
+            flags[maxLen - 1 - i] = ((num & 0xFF) & (1 << i)) != 0;
         }
         return flags;
     }
@@ -894,13 +894,7 @@ public class TinyMove {
             if(move.getOperation()!= null) {
                 byte val = booleansToByte(move.getOperation());
                 String op = getOperation(val);
-
-                if(op.equalsIgnoreCase("+")) {
-                    sb.append(op);
-                } else {
-                    sb.append(op);
-                }
-
+                sb.append(op);
                 String operation = sb.toString();
                 bytes.add(encodeToNativeCode(operation));
             }

@@ -290,11 +290,12 @@ public class FileUtil {
         return bytes.length;
     }
 
-    public static void deleteFile(String path) {
+    public static boolean deleteFile(String path) {
         File fp = new File(path);
         if(fp.exists()) {
-            fp.delete();
+            return fp.delete();
         }
+        return true;
     }
 
     public static void copyFile(String sourceFilePath, String destinationFilePath) throws IOException {
