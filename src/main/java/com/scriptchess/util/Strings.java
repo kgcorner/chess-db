@@ -5,6 +5,7 @@ import org.springframework.util.DigestUtils;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.*;
 
 /**
@@ -14,7 +15,7 @@ import java.util.*;
  */
 
 public class Strings {
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
     public static boolean isNullOrEmpty(String val) {
         return val == null || val.trim().length() == 0;
     }
@@ -49,7 +50,7 @@ public class Strings {
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
-            //Handle e
+            Thread.currentThread().interrupt();
         }
 
         return toHex(System.currentTimeMillis());
