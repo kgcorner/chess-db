@@ -3,6 +3,7 @@ package com.scriptchess.services;
 
 import com.scriptchess.annotations.ChessDbService;
 import com.scriptchess.data.*;
+import com.scriptchess.exceptions.ChessDbException;
 import com.scriptchess.exceptions.DAOException;
 import com.scriptchess.exceptions.UnSupportedPgn;
 import com.scriptchess.models.Game;
@@ -11,9 +12,14 @@ import com.scriptchess.models.Player;
 import com.scriptchess.models.Tournament;
 import com.scriptchess.services.parsers.PGNProcessorFactory;
 import com.scriptchess.services.parsers.PgnProcessor;
+import com.scriptchess.util.DateUtil;
 import com.scriptchess.util.Strings;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +32,7 @@ import java.util.regex.Pattern;
 
 @ChessDbService
 public class ChessService {
+    private static final Logger LOGGER = LogManager.getLogger(ChessService.class);
 
     @Autowired
     private GamesDao gamesDao;
@@ -41,6 +48,9 @@ public class ChessService {
 
     @Autowired
     private MovesDao movesDao;
+
+    @Value("${games.path}")
+    private String gamesPath;
 
     /**
      * Saves the game
@@ -287,6 +297,57 @@ public class ChessService {
     }
 
 
+    /**
+     * Writes list of give games on configured path in compressed format
+     * @param games list of games
+     * @param session game writing session
+     * @param gameUpdateCallback callback to get update on game writing process
+     * @param fenUpdateCallback  callback to get update on Fen writing process
+     * @return
+     * @throws ChessDbException
+     */
+    public List<Game> saveGames(List<Game> games, String session, UpdateCallBack gameUpdateCallback, UpdateCallBack fenUpdateCallback) throws ChessDbException {
+        List<String> ids = new ArrayList<>();
+        long idGenerationStart = System.currentTimeMillis();
+        for(Game game : games) {
+            String id = Strings.generateId();
+            while (ids.contains(id)) {
+                id = Strings.generateId();
+            }
+            game.setGameId(id);
+            ids.add(id);
+        }
+        long idGenerationEnd = System.currentTimeMillis();
+        LOGGER.info("ID generation took " + DateUtil.getTimeDiff(idGenerationEnd, idGenerationStart));
+        long startPgnCompression = System.currentTimeMillis();
+        for(Game game : games) {
+            String idToPath = Strings.createPathFromId(game.getGameId());
+            String path = gamesPath + File.separator + idToPath;
+            if(path.endsWith(File.separator)) {
+                path = path.substring(0, path.length() -1);
+            }
+            PgnCompressorDecompressor.writeGame(game, path);
+            if(gameUpdateCallback != null)
+                gameUpdateCallback.updated(game);
+        }
+        long endPgnCompression = System.currentTimeMillis();
+        LOGGER.debug("PGN Compression for all games took :" + (endPgnCompression - startPgnCompression ) +"ms");
+        return games;
+    }
 
+    public Game getGame(String gameId) {
+        String path = Strings.createPathFromId(gameId);
+        path = gamesPath + File.separator + path;
+        if(path.endsWith(File.separator)) {
+            path = path.substring(0, path.length() -1);
+        }
+        List<Game> games = PgnCompressorDecompressor.readGames(path);
+
+        if (games != null && games.size() > 0) {
+            return games.get(0);
+        }
+
+        return null;
+    }
 
 }

@@ -1,12 +1,14 @@
 package com.scriptchess.services;
 
 import com.scriptchess.data.*;
+import com.scriptchess.exceptions.ChessDbException;
 import com.scriptchess.exceptions.DAOException;
 import com.scriptchess.exceptions.UnSupportedPgn;
 import com.scriptchess.models.Game;
 import com.scriptchess.models.Move;
 import com.scriptchess.models.Player;
 import com.scriptchess.models.Tournament;
+import com.scriptchess.services.parsers.ByteWisePGNProcessor;
 import com.scriptchess.services.parsers.PGNProcessorFactory;
 import com.scriptchess.services.parsers.PgnProcessor;
 import com.scriptchess.util.TestUtils;
@@ -49,6 +51,47 @@ public class ChessServiceTest {
     private ChessService service;
     private PgnProcessor pgnProcessor;
 
+    private static final String MULTI_GAME_PGN = "[Site \"https://www.chess.com\"]\n" +
+        "[Event \"Play-In\"]\n" +
+        "[White \"Aronian, Levon\"]\n" +
+        "[Black \"Kollars, Dmitrij\"]\n" +
+        "[WhiteFideId \"13300474\"]\n" +
+        "[BlackFideId \"12909572\"]\n" +
+        "[WhiteElo \"2721\"]\n" +
+        "[BlackElo \"2522\"]\n" +
+        "[Result \"1/2-1/2\"]\n" +
+        "[Round \"09\"]\n" +
+        "[TimeControl \"600+2\"]\n" +
+        "[Date \"2023.05.01\"]\n" +
+        "[WhiteClock \"0:03:06\"]\n" +
+        "[BlackClock \"0:02:02\"]\n" +
+        "\n" +
+        "\n" +
+        "\n" +
+        "1. e4 {[%clk 0:10:01]}  e5 {[%clk 0:09:54] (e4)} 2. Nf3 {[%clk 0:10:02]}  Nc6 {[%clk 0:09:54]} 3. Bc4 {[%clk 0:10:03]}  Nf6 {[%clk 0:09:53]} 4. d3 {[%clk 0:10:04]}  Bc5 {[%clk 0:09:52]} 5. O-O {[%clk 0:10:05]}  d6 {[%clk 0:09:50]} 6. c3 {[%clk 0:10:04]}  a5 {[%clk 0:09:50]} 7. Re1 {[%clk 0:09:59]}  O-O {[%clk 0:09:48]} 8. h3 {[%clk 0:09:56]}  h6 {[%clk 0:09:33]} 9. Nbd2 {[%clk 0:09:56]}  Be6 {[%clk 0:09:26]} 10. Bb5 {[%clk 0:09:56]}  Nd7 {[%clk 0:09:22]} 11. Nf1 {[%clk 0:09:53]}  d5 {[%clk 0:09:22]} 12. Ne3 {[%clk 0:09:51]}  dxe4 {[%clk 0:08:35]} 13. dxe4 {[%clk 0:09:52]}  Bd6 {[%clk 0:08:36]} 14. Nf5 {[%clk 0:09:41]}  Nc5 {[%clk 0:08:14]} 15. Nxd6 {[%clk 0:08:22]}  cxd6 {[%clk 0:07:35]} 16. Nd2 {[%clk 0:08:09]}  d5 {[%clk 0:07:21]} 17. exd5 {[%clk 0:07:53]}  Qxd5 {[%clk 0:07:21]} 18. Nf1 {[%clk 0:07:21]}  Qxd1 {[%clk 0:05:43]} 19. Rxd1 {[%clk 0:07:21]}  Rfd8 {[%clk 0:05:44]} 20. Be3 {[%clk 0:07:16]}  Ne4 {[%clk 0:05:44]} 21. Rxd8+ {[%clk 0:06:50]}  Nxd8 {[%clk 0:05:23]} 22. Bd3 {[%clk 0:06:38]}  Nf6 {[%clk 0:04:58]} 23. a4 {[%clk 0:06:37]}  Nd5 {[%clk 0:04:51]} 24. Bd2 {[%clk 0:06:32]}  Nc6 {[%clk 0:04:51]} 25. Re1 {[%clk 0:06:24]}  Nb6 {[%clk 0:04:25]} 26. Bb5 {[%clk 0:06:10]}  Bb3 {[%clk 0:04:26]} 27. Be3 {[%clk 0:05:58]}  Nc4 {[%clk 0:03:53]} 28. Nd2 {[%clk 0:05:50]}  Nxd2 {[%clk 0:03:48]} 29. Bxd2 {[%clk 0:05:52]}  f6 {[%clk 0:03:41]} 30. Be3 {[%clk 0:05:38]}  Na7 {[%clk 0:03:20]} 31. Be2 {[%clk 0:05:32]}  Nc6 {[%clk 0:03:20]} 32. Bb6 {[%clk 0:05:26]}  Ne7 {[%clk 0:02:53]} 33. Bd1 {[%clk 0:05:11]}  Bc4 {[%clk 0:02:43]} 34. Bc5 {[%clk 0:04:30]}  Nd5 {[%clk 0:02:39]} 35. b3 {[%clk 0:04:30]}  Bd3 {[%clk 0:02:36]} 36. c4 {[%clk 0:04:08]}  Rc8 {[%clk 0:02:24]} 37. Ba3 {[%clk 0:03:51]}  Nb4 {[%clk 0:02:25]} 38. Bf3 {[%clk 0:03:32]}  Nc2 {[%clk 0:02:17]} 39. Rd1 {[%clk 0:03:22]}  e4 {[%clk 0:02:15]} 40. Bg4 $ { [%clk 0:03:22]}  Rc6 {[%clk 0:02:01]} 41. Bb2 ({[%clk 0:03:07]})  Rb6{[%clk 0:02:02]} 42. c5({[%clk 0:03:06]}) 1/2-1/2\n" +
+        "\n" +
+        "\n" +
+        "\n" +
+        "\n" +
+        "[Site \"https://www.chess.com\"]\n" +
+        "[Event \"Play-In\"]\n" +
+        "[White \"Shevchenko, Kirill\"]\n" +
+        "[Black \"Andreikin, Dmitry\"]\n" +
+        "[WhiteFideId \"14129574\"]\n" +
+        "[BlackFideId \"4158814\"]\n" +
+        "[WhiteElo \"2598\"]\n" +
+        "[BlackElo \"2628\"]\n" +
+        "[Result \"1/2-1/2\"]\n" +
+        "[Round \"09\"]\n" +
+        "[TimeControl \"600+2\"]\n" +
+        "[Tournament \"Daily\"]\n" +
+        "[Date \"2023.05.01\"]\n" +
+        "[WhiteClock \"0:09:34\"]\n" +
+        "[BlackClock \"0:09:28\"]\n" +
+        "\n" +
+        "1. e4 {[%clk 0:10:00]}  c5 {[%clk 0:10:01]} 2. Nc3 {[%clk 0:10:00]}  Nc6 {[%clk 0:10:00]} 3. Bb5 {[%clk 0:10:00]}  e5 {[%clk 0:09:40]} 4. d3 {[%clk 0:09:51]}  Nd4 {[%clk 0:09:36]} 5. Bc4 {[%clk 0:09:47]}  d6 {[%clk 0:09:28]} 6. Nge2 {[%clk 0:09:34]} 1/2-1/2";
+        private static final String GAME_STORAGE_PATH = "/tmp/test-games";
+
     @Before
     public void setUp() throws Exception {
         service = new ChessService();
@@ -65,6 +108,7 @@ public class ChessServiceTest {
         Whitebox.setInternalState(service, "playersDao", playersDao);
         Whitebox.setInternalState(service, "tournamentsDao", tournamentsDao);
         Whitebox.setInternalState(service, "movesDao", movesDao);
+        Whitebox.setInternalState(service, "gamesPath", GAME_STORAGE_PATH);
         when(PGNProcessorFactory.getProcessor(ArgumentMatchers.anyString())).thenReturn(pgnProcessor);
     }
 
@@ -340,5 +384,18 @@ public class ChessServiceTest {
         when(tournamentsDao.getTournamentsInYear(year)).thenReturn(tournamentsIn2022);
         List<Tournament> result = service.getTournamentsInYear(year);
         assertEquals(tournamentsIn2022, result);
+    }
+
+    @Test
+    public void testSaveAndReadGames() throws ChessDbException {
+        String session = "session";
+        List<Game> games = new ByteWisePGNProcessor().parseMultiGamePgn(MULTI_GAME_PGN.getBytes());
+        List<Game> writtenGames = service.saveGames(games, session, object -> {
+            assertTrue(games.contains(object));
+        }, object -> {
+
+        });
+        Game game = service.getGame(writtenGames.get(0).getGameId());
+        assertEquals(writtenGames.get(0).getEvent(), game.getEvent());
     }
 }
