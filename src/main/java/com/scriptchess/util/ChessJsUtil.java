@@ -54,7 +54,7 @@ public class ChessJsUtil {
                 fens = Arrays.asList(fenArray);
             }
         } catch (InterruptedException e) {
-            throw new IllegalArgumentException(e);
+            Thread.currentThread().interrupt();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -102,7 +102,7 @@ public class ChessJsUtil {
                 }
             }
         } catch (InterruptedException e) {
-            throw new IllegalArgumentException(e);
+            Thread.currentThread().interrupt();
         }
         return null;
     }
