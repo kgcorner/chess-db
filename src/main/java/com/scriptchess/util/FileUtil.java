@@ -3,6 +3,7 @@ package com.scriptchess.util;
 
 import com.scriptchess.exceptions.ChessDbException;
 import com.scriptchess.exceptions.FileExists;
+import com.scriptchess.services.FenCompressorDecompressor;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger; import org.apache.logging.log4j.LogManager;
 
@@ -237,20 +238,32 @@ public class FileUtil {
      * @throws IOException
      */
     public static List<String> readFileLines(String path) throws FileNotFoundException, IOException {
-        File fp = new File(path);
-        if(!fp.exists()) {
-            return new ArrayList<>();
-        }
-        FileReader fr = new FileReader(fp);
-        BufferedReader br = new BufferedReader(fr);
-
-        ArrayList<String> lines = new ArrayList<>();
-        String line;
-        while((line = br.readLine()) != null) { lines.add(line); }
-
-        fr.close();
-        return lines;
+        return readFileLines(path, true);
     }
+
+    public static List<String> readFileLines(String path, boolean isBinary) throws FileNotFoundException, IOException {
+        if(isBinary) {
+            byte[] bytes = FileUtil.readBytes(path);
+            return FenCompressorDecompressor.getFenList(bytes);
+        } else {
+            File fp = new File(path);
+            if(!fp.exists()) {
+                return new ArrayList<>();
+            }
+            FileReader fr = new FileReader(fp);
+            BufferedReader br = new BufferedReader(fr);
+
+            ArrayList<String> lines = new ArrayList<>();
+            String line;
+            while((line = br.readLine()) != null) { lines.add(line); }
+
+            fr.close();
+            return lines;
+        }
+
+    }
+
+
 
     /**
      * Reads whole file and returns in string

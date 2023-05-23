@@ -373,9 +373,9 @@ public class FileUtilTest {
             file.delete();
         }
         try {
-            FileUtil.writeData(stringList, false, filePath);
+            FileUtil.writeData(stringList, true, filePath);
             try {
-                List<String> strings = FileUtil.readFileLines(filePath);
+                List<String> strings = FileUtil.readFileLines(filePath, false);
                 assertEquals(stringList, strings);
             } catch (IOException e) {
                 e.printStackTrace();

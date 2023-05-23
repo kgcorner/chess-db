@@ -11,6 +11,7 @@ import com.scriptchess.models.Tournament;
 import com.scriptchess.services.parsers.ByteWisePGNProcessor;
 import com.scriptchess.services.parsers.PGNProcessorFactory;
 import com.scriptchess.services.parsers.PgnProcessor;
+import com.scriptchess.util.FenDbHandler;
 import com.scriptchess.util.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,7 @@ public class ChessServiceTest {
     private MovesDao movesDao;
     private ChessService service;
     private PgnProcessor pgnProcessor;
+    private FenDbHandler fenDbHandler;
 
     private static final String MULTI_GAME_PGN = "[Site \"https://www.chess.com\"]\n" +
         "[Event \"Play-In\"]\n" +
@@ -101,7 +103,7 @@ public class ChessServiceTest {
         tournamentsDao = mock(TournamentsDao.class);
         movesDao = mock(MovesDao.class);
         pgnProcessor = mock(PgnProcessor.class);
-
+        fenDbHandler = mock(FenDbHandler.class);
         mockStatic(PGNProcessorFactory.class);
         Whitebox.setInternalState(service, "gamesDao", gamesDao);
         Whitebox.setInternalState(service, "indexDao", indexDao);
@@ -109,6 +111,7 @@ public class ChessServiceTest {
         Whitebox.setInternalState(service, "tournamentsDao", tournamentsDao);
         Whitebox.setInternalState(service, "movesDao", movesDao);
         Whitebox.setInternalState(service, "gamesPath", GAME_STORAGE_PATH);
+        Whitebox.setInternalState(service, "fenDbHandler", fenDbHandler);
         when(PGNProcessorFactory.getProcessor(ArgumentMatchers.anyString())).thenReturn(pgnProcessor);
     }
 
