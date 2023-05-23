@@ -150,8 +150,7 @@ public class FenDbHandler {
                     if(callBack != null)
                         callBack.updated(fens);
                 } catch (ChessDbException e) {
-                    e.printStackTrace();
-                    LOGGER.error("Failed fen writing: " );
+                    LOGGER.error("Failed fen writing: " ,e);
                     failedFens.addAll(fens);
                     callBack.updated("Error: " );
                 }
@@ -169,7 +168,7 @@ public class FenDbHandler {
             }
 
         } catch (InterruptedException e) {
-            LOGGER.error(e);
+            Thread.currentThread().interrupt();
         } finally {
             dbExecutor.shutdown();
         }
