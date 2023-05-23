@@ -6,13 +6,12 @@ import com.scriptchess.data.*;
 import com.scriptchess.exceptions.ChessDbException;
 import com.scriptchess.exceptions.DAOException;
 import com.scriptchess.exceptions.UnSupportedPgn;
-import com.scriptchess.models.Game;
-import com.scriptchess.models.Move;
-import com.scriptchess.models.Player;
-import com.scriptchess.models.Tournament;
+import com.scriptchess.models.*;
 import com.scriptchess.services.parsers.PGNProcessorFactory;
 import com.scriptchess.services.parsers.PgnProcessor;
 import com.scriptchess.util.DateUtil;
+import com.scriptchess.util.FenCreator;
+import com.scriptchess.util.FenDbHandler;
 import com.scriptchess.util.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +50,12 @@ public class ChessService {
 
     @Value("${games.path}")
     private String gamesPath;
+
+    @Value("${fens.path}")
+    private String fensPath;
+
+    @Autowired
+    private FenDbHandler fenDbHandler;
 
     /**
      * Saves the game
@@ -167,6 +172,24 @@ public class ChessService {
             map = movesDao.getMovesAndGameCountAfter(moveList);
         } catch (DAOException e) {
             throw new RuntimeException(e.getMessage());
+        }
+        return map;
+    }
+
+    /**
+     * Returns moves and number of time the move was played on any given position
+     * @param fen
+     * @return
+     * @throws ChessDbException
+     */
+    public Map<String, MoveDetails> getMovesForPosition(String fen) throws ChessDbException {
+        Map<String, MoveDetails> map = new HashMap<>();
+        Fen fenModel = FenCreator.findFen(fen, fensPath);
+        if(fenModel == null)
+            return null;
+        for(MoveDetails md : fenModel.getMoveDetails()) {
+            md.setCount(md.getBlackWins() + md.getWhiteWins() + md.getDraws());
+            map.put(md.getMove(), md);
         }
         return map;
     }
@@ -332,6 +355,8 @@ public class ChessService {
         }
         long endPgnCompression = System.currentTimeMillis();
         LOGGER.debug("PGN Compression for all games took :" + (endPgnCompression - startPgnCompression ) +"ms");
+        fenDbHandler.createFens(games, session, fenUpdateCallback);
+        LOGGER.debug("Total byte written for fen: " + FenCreator.byteWritten);
         return games;
     }
 
