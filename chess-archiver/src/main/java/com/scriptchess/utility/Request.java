@@ -660,7 +660,7 @@ public class Request {
                     result.append("=");
                     result.append(URLEncoder.encode(entry.getValue() == null ? "" : entry.getValue(), "UTF-8"));
                 } catch (UnsupportedEncodingException x) {
-                    System.err.println(e.getMessage());
+                    System.err.println(x.getMessage());
                 }
             }
         }

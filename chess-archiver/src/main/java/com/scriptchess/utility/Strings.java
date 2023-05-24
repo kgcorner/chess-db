@@ -19,7 +19,7 @@ public class Strings {
         // Static getInstance method is called with hashing MD5
         MessageDigest md = null;
         try {
-            md = MessageDigest.getInstance("MD5");
+            md = MessageDigest.getInstance("SHA-512");
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("No MD5 digest found");
         }
