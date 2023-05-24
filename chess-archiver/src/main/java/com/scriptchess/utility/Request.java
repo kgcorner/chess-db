@@ -199,14 +199,14 @@ public class Request {
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
             if(br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
         }
@@ -352,14 +352,14 @@ public class Request {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 }
             }
             if(br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    //throw new RuntimeException(e);
                 }
             }
         }
@@ -456,14 +456,14 @@ public class Request {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
             if(br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
         }
@@ -621,7 +621,7 @@ public class Request {
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
 
@@ -629,14 +629,14 @@ public class Request {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
             if(br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    throw new NetworkException("Unexpected error Occurred", 600);
+                    //throw new NetworkException("Unexpected error Occurred", 600);
                 }
             }
         }
@@ -702,7 +702,7 @@ public class Request {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 

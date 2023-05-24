@@ -111,9 +111,9 @@ public class ScriptchessArchiver {
                     pgns.add(md5);
                     if((status.getEndsAt() - status.getStartedAt()) < 60 *1000) {
                         try {
-                            Thread.sleep(60*1000);
+                            Thread.sleep(60* (long)1000);
                         } catch (InterruptedException e) {
-                            //Handle e
+                            Thread.currentThread().interrupt();
                         }
                     }
                 }
@@ -147,7 +147,7 @@ public class ScriptchessArchiver {
                 }
             } catch (NetworkException | InterruptedException e) {
                 System.out.println(e.getMessage());
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }

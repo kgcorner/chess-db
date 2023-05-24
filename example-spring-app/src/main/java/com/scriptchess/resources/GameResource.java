@@ -40,7 +40,7 @@ public class GameResource {
     @PostMapping("/games/game-creation-session")
     public String saveGameInBulk(@RequestParam("image") MultipartFile pgnFile) throws IOException {
         LOGGER.info("received request for Creating games, file name: " + pgnFile.getOriginalFilename());
-        byte[] bytes = IOUtils.readFully(pgnFile.getInputStream(), Long.valueOf(pgnFile.getSize()).intValue());
+        byte[] bytes = IOUtils.readFully(pgnFile.getInputStream(), (int)pgnFile.getSize());
         try {
             return service.createGameCreationRequestWithPreparedGames(bytes, pgnFile.getOriginalFilename());
         } catch (IllegalStateException x) {
