@@ -48,10 +48,10 @@ public class ScriptchessArchiver {
                     pgns = new ArrayList<>();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             System.exit(-1);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             System.exit(-1);
         }
         String dirPath = args[0];
@@ -82,7 +82,7 @@ public class ScriptchessArchiver {
                 try {
                     gameFile = new GameAndFenPreparer().getGames(file.getAbsolutePath(), NODE_JS_PATH);
                 } catch (Exception x) {
-                    x.printStackTrace();
+                    System.err.println(x.getMessage());
                     continue;
                 }
 

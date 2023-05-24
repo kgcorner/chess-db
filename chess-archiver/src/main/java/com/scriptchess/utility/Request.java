@@ -66,8 +66,6 @@ public class Request {
     private static final int FAILURE_CODE = 400;
     private String userName = "";
     private String password = "";
-
-    private String bearerToken = "d211f1afb07cfebba37f6244728bce8e23c11ff3";
     private Request() {
         this(false);
     }
@@ -97,7 +95,7 @@ public class Request {
      */
     public void setMandatoryHeaders() {
         mandatoryHeaders = new HashMap<String, String>();
-        mandatoryHeaders.put(AUTHORIZATION, bearerToken);
+        //mandatoryHeaders.put(AUTHORIZATION, bearerToken);
         mandatoryHeaders.put("User-Agent","PostmanRuntime/7.26.8");
     }
 
@@ -250,7 +248,7 @@ public class Request {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
         return null;
     }
@@ -662,7 +660,7 @@ public class Request {
                     result.append("=");
                     result.append(URLEncoder.encode(entry.getValue() == null ? "" : entry.getValue(), "UTF-8"));
                 } catch (UnsupportedEncodingException x) {
-                    x.printStackTrace();
+                    System.err.println(e.getMessage());
                 }
             }
         }
@@ -687,7 +685,7 @@ public class Request {
             try {
                 is.close();
             } catch (IOException e) {
-                throw e;
+                //throw e;
             }
         }
 
