@@ -1,8 +1,7 @@
 package com.scriptchess.resources;
 
 
-import com.scriptchess.data.model.GameCreationStatus;
-import com.scriptchess.data.model.MiniGameModel;
+import com.scriptchess.data.model.GameCreationStatusClientModel;
 import com.scriptchess.exception.ResourceNotFoundException;
 import com.scriptchess.exception.ScriptChessException;
 import com.scriptchess.models.Game;
@@ -50,12 +49,12 @@ public class GameResource {
     }
 
     @GetMapping("/games/create-requests-status")
-    public List<GameCreationStatus> getAllBulkCreateGameRequests() {
+    public List<GameCreationStatusClientModel> getAllBulkCreateGameRequests() {
         return service.getAllBulkCreateGameRequests();
     }
 
     @GetMapping("/games/create/{session}")
-    public GameCreationStatus getGameCreateSessionStatus(@PathVariable String session)
+    public GameCreationStatusClientModel getGameCreateSessionStatus(@PathVariable String session)
         throws ScriptChessException, IOException {
         try {
             return service.getGameCreationStatus(session);

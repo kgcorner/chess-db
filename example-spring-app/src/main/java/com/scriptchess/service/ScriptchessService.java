@@ -2,7 +2,7 @@ package com.scriptchess.service;
 
 
 import com.scriptchess.dao.GameDao;
-import com.scriptchess.data.model.GameCreationStatus;
+import com.scriptchess.data.model.GameCreationStatusClientModel;
 import com.scriptchess.data.model.MiniGameModel;
 import com.scriptchess.exception.ResourceNotFoundException;
 import com.scriptchess.exception.ScriptChessException;
@@ -35,7 +35,7 @@ public class ScriptchessService {
     private static final Logger LOGGER = LogManager.getLogger(ScriptchessService.class);
     public static final String currentSession = null;
 
-    private Map<String, GameCreationStatus> gameCreationStatusMap;
+    private Map<String, GameCreationStatusClientModel> gameCreationStatusMap;
     private ReadWriteLock readWriteLock = null;
 
     @Autowired
@@ -147,7 +147,7 @@ public class ScriptchessService {
         LOGGER.debug("Took lock for updating last created fens");
         try {
             if (gameCreationStatusMap.containsKey(session)) {
-                GameCreationStatus gameCreationStatus = gameCreationStatusMap.get(session);
+                GameCreationStatusClientModel gameCreationStatus = gameCreationStatusMap.get(session);
                 gameCreationStatus.setLastCreatedFen(fens.get(fens.size() - 1).getFenString());
                 gameCreationStatus.setTotalCreatedFens(gameCreationStatus.getTotalCreatedFens() + fens.size());
                 gameCreationStatus.setLastFenCreatedOn(new Date());
@@ -172,7 +172,7 @@ public class ScriptchessService {
                 model.setWhitePlayer(game.getWhitePlayer().getName());
                 model.setBlackPlayer(game.getBlackPlayer().getName());
                 model.setTournament(game.getTournament().getName());
-                GameCreationStatus gameCreationStatus = gameCreationStatusMap.get(session);
+                GameCreationStatusClientModel gameCreationStatus = gameCreationStatusMap.get(session);
                 gameCreationStatus.setLastCreatedGame(model);
                 gameCreationStatus.setLastGameCreatedOn(new Date());
                 gameCreationStatus.setTotalCreatedGames(gameCreationStatus.getTotalCreatedGames() + 1);
@@ -228,15 +228,15 @@ public class ScriptchessService {
         return Collections.emptyList();
     }
 
-    public List<GameCreationStatus> getAllBulkCreateGameRequests() {
-        List<GameCreationStatus> requests = new ArrayList<>();
-        for(Map.Entry<String, GameCreationStatus> entry : gameCreationStatusMap.entrySet()) {
+    public List<GameCreationStatusClientModel> getAllBulkCreateGameRequests() {
+        List<GameCreationStatusClientModel> requests = new ArrayList<>();
+        for(Map.Entry<String, GameCreationStatusClientModel> entry : gameCreationStatusMap.entrySet()) {
             requests.add(entry.getValue());
         }
         return requests;
     }
 
-    public GameCreationStatus getGameCreationStatus(String sessionId) throws ResourceNotFoundException {
+    public GameCreationStatusClientModel getGameCreationStatus(String sessionId) throws ResourceNotFoundException {
         Lock lock = readWriteLock.readLock();
         lock.lock();
         LOGGER.debug("Took lock for fetching game creation request status");
@@ -262,7 +262,7 @@ public class ScriptchessService {
         Lock lock = readWriteLock.readLock();
         lock.lock();
         if(gameCreationStatusMap.size() > 0) {
-            for(Map.Entry<String, GameCreationStatus> entry : gameCreationStatusMap.entrySet()) {
+            for(Map.Entry<String, GameCreationStatusClientModel> entry : gameCreationStatusMap.entrySet()) {
                 if(!entry.getValue().isCompleted()) {
                     lock.unlock();
                     throw new IllegalStateException("Last Game creation process is still running");
@@ -272,7 +272,7 @@ public class ScriptchessService {
         lock.unlock();
 
         String session = Strings.generateUniqueSessionId();
-        gameCreationStatusMap.put(session, new GameCreationStatus());
+        gameCreationStatusMap.put(session, new GameCreationStatusClientModel());
         gameCreationStatusMap.get(session).setSession(session);
         new Thread(new Runnable() {
             @Override
@@ -285,7 +285,7 @@ public class ScriptchessService {
                     LOGGER.error(e.getMessage(), e);
                     Lock lock = readWriteLock.writeLock();
                     lock.lock();
-                    final GameCreationStatus gameCreationStatus = gameCreationStatusMap.get(session);
+                    final GameCreationStatusClientModel gameCreationStatus = gameCreationStatusMap.get(session);
                     gameCreationStatus.setFailed(true);
                     gameCreationStatus.setError(e);
                     gameCreationStatus.setCompleted(true);

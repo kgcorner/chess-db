@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 
-public class GameCreationStatus {
+public class GameCreationStatusClientModel {
     private int totalGameCount;
     private int totalFenCount;
     private int totalCreatedGames;
