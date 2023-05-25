@@ -374,4 +374,7 @@ public class ChessService {
         return null;
     }
 
+    public Fen findFen(String fen) {
+        return FenCreator.findFen(fen, fensPath);
+    }
 }
