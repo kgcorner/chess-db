@@ -2,6 +2,7 @@ package com.scriptchess.resources;
 
 
 import com.scriptchess.data.model.GameCreationStatusClientModel;
+import com.scriptchess.data.model.MiniGameModel;
 import com.scriptchess.exception.ResourceNotFoundException;
 import com.scriptchess.exception.ScriptChessException;
 import com.scriptchess.models.Game;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -62,5 +64,16 @@ public class GameResource {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, x.getLocalizedMessage(), x);
         }
+    }
+
+    @GetMapping("/games")
+    public List<MiniGameModel> getGamesWithPosition(
+        @RequestParam(name = "fen", required = false) String fen,
+        @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+        @RequestParam(name = "count", required = false, defaultValue = "100") int count) throws ScriptChessException {
+
+        byte[] decode = Base64.getDecoder().decode(fen);
+        fen = new String(decode);
+        return service.getGamesWithPosition(fen, page, count);
     }
 }

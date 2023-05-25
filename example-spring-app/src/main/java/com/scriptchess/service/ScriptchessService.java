@@ -15,6 +15,7 @@ import com.scriptchess.util.JsonUtil;
 import com.scriptchess.util.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.units.qual.min;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -303,5 +304,35 @@ public class ScriptchessService {
         long endDesr = System.currentTimeMillis();
         LOGGER.info("Deserializing payload took " + DateUtil.getTimeDiff(endDesr , startDesr));
         return createAllGames(session, games);
+    }
+
+    public List<MiniGameModel> getGamesWithPosition(String fen, int page, int count) {
+        Fen fenModel = chessService.findFen(fen);
+        List<MiniGameModel> miniGameModels = new ArrayList<>();
+        for (String id  :fenModel.getGameIds()) {
+            Game game = chessService.getGame(id);
+            MiniGameModel miniGameModel = new MiniGameModel();
+            if(game.getOtherDetails().containsKey("fen") || game.getOtherDetails().containsKey("FEN")
+                || game.getOtherDetails().containsKey("Fen")) {
+                miniGameModel.setPartial(true);
+            }
+            miniGameModel.setTournament(game.getTournament().getName());
+            miniGameModel.setWhitePlayer(game.getWhitePlayer().getName());
+            miniGameModel.setBlackPlayer(game.getBlackPlayer().getName());
+            int moveCount = game.getMoves().size();
+            miniGameModel.setMoveCount(game.getMoves().size());
+            if(moveCount %2 == 0) {
+                moveCount = moveCount/2;
+            } else {
+                moveCount = (moveCount /2) + 1;
+            }
+            miniGameModel.setMoveCount(moveCount);
+            miniGameModel.setEco(game.getEco());
+            miniGameModel.setDate(game.getDate());
+            miniGameModel.setGameId(game.getGameId());
+            miniGameModel.setResult(game.getResult());
+            miniGameModels.add(miniGameModel);
+        }
+        return miniGameModels;
     }
 }
