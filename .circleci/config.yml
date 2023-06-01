@@ -21,7 +21,7 @@ jobs:
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Build
-          command: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+          command: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install
       # Then run your tests!
       - run:
           name: Send_to_codeCov
