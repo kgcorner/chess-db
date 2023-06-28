@@ -4,7 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kgcorner_chess-db&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kgcorner_chess-db)
 # chess-db
 Chess-db is a small database for conveniently storing and fetching chess games and positions. You can use this in your chess app to store games.
-The database is build using Spring boot. You can easily integrate it with a spring boot service.
+The database is build using Spring boot. You can easily integrate it with a spring boot service. It is currently being used at [Scriptchess.com](https://scriptchess.com) 
 
 # Features
 Currently below features are supported
